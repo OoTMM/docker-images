@@ -3,13 +3,15 @@ FROM debian:trixie AS builder
 # Install the essentials
 RUN apt-get update
 RUN apt-get install --no-install-recommends -y \
+    ca-certificates \
     build-essential \
     cmake \
     git \
     curl \
     wget \
     ninja-build \
-    inotify-tools
+    inotify-tools \
+    zip
 
 # Copy our scripts
 COPY ./scripts /scripts
