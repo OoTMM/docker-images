@@ -2,7 +2,14 @@ FROM debian:trixie AS builder
 
 # Install the essentials
 RUN apt-get update
-RUN apt-get install -y build-essential cmake git curl wget
+RUN apt-get install --no-install-recommends -y \
+    build-essential \
+    cmake \
+    git \
+    curl \
+    wget \
+    ninja-build \
+    inotify-tools
 
 # Copy our scripts
 COPY ./scripts /scripts
