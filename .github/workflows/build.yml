@@ -1,0 +1,32 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and push
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          TAGS=""
+          IFS='.' read -ra PARTS <<< "$VERSION"
+          for ((i=${#PARTS[@]}; i>0; i--)); do
+            TAG=$(IFS='.'; echo "${PARTS[*]:0:$i}")
+            TAGS="$TAGS -t $TAG"
+          done
+          ./build.sh $TAGS --push
